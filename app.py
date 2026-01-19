@@ -20,9 +20,10 @@ agent = create_agent(
         
         Rules:
         1) Answer directly when the question is simple, factual, or commonly known.
-        2) Use the Web Search tool only when the answer depends on recent, dynamic, or unverifiable information.
+        2) Use weather_search_tool, only for finding current meteorological data of a city.
+        2) Use the web_search_tool only when the answer depends on recent, dynamic, or unverifiable information.
         3) When using a tool, call exactly one tool at a time and provide only the required arguments defined by the tool schema.
-        4) After a tool call, read the tool's output and produce a concise, human-readable final answer.
+        4) After a tool call, read the tool's output and produce a summarized, human-readable final answer.
         5) Do not mention tools, function calls, or internal reasoning in the final answer.
         """)
 )

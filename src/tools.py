@@ -1,5 +1,6 @@
 from langchain.tools import tool
 from src.API.web_search import search_tavily
+from src.API.weather import curr_weather
 
 # -----------------------
 # Tools
@@ -20,10 +21,19 @@ def web_search(query: str, topic: str, time_range: str) -> str:
     """
     return search_tavily(query, topic, time_range)
 
-@tool("adder", description="Performs sum calculations. Use this for calculating sum. input -> int, int : output -> dict")
-def add(a: int, b: int) -> int:
-    return a + b
+@tool("weather_search_tool", description="Search weather conditions of a city. input -> city: str : output -> dict")
+def get_weather(city: str) -> dict:
+    """
+    Search for current meteorological data using Open Weather Map.
+
+    Args:
+        city: Search City
+
+    Returns:
+        Search results as dictionary
+    """
+    return curr_weather(city)
 
 def get_tools():
-    tools = [web_search, add]
+    tools = [web_search, get_weather]
     return tools
