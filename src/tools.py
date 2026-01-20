@@ -21,8 +21,8 @@ def web_search(query: str, topic: str, time_range: str) -> str:
     """
     return search_tavily(query, topic, time_range)
 
-@tool("weather_search_tool", description="Search weather conditions of a city. input -> city: str : output -> dict")
-def get_weather(city: str) -> dict:
+@tool("weather_search_tool", description="Search weather conditions of a city. input -> city: str : output -> str")
+def get_weather(city: str) -> str:
     """
     Search for current meteorological data using Open Weather Map.
 
@@ -30,7 +30,7 @@ def get_weather(city: str) -> dict:
         city: Search City
 
     Returns:
-        Search results as dictionary
+        Search results as string
     """
     return curr_weather(city)
 
