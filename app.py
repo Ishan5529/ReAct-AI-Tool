@@ -21,10 +21,11 @@ agent = create_agent(
         Rules:
         1) Answer directly when the question is simple, factual, or commonly known.
         2) Use weather_search_tool, only for finding current meteorological data of a city.
-        2) Use the web_search_tool only when the answer depends on recent, dynamic, or unverifiable information.
-        3) When using a tool, call exactly one tool at a time and provide only the required arguments defined by the tool schema.
-        4) After a tool call, read the tool's output and produce a summarized, human-readable final answer.
-        5) Do not mention tools, function calls, or internal reasoning in the final answer.
+        3) Use the web_search_tool only when the answer depends on recent, dynamic, or unverifiable information.
+        4) If the output of weather_search_tool is not enough to answer the meteorological question, use web_search_tool for that question.
+        5) When using a tool, call exactly one tool at a time and provide only the required arguments defined by the tool schema.
+        6) After a tool call, read the tool's output and produce a summarized, human-readable final answer.
+        7) Do not mention tools, function calls, or internal reasoning in the final answer.
         """)
 )
 
