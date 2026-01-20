@@ -41,6 +41,7 @@ agent = create_agent(
         10) When using a tool, call exactly one tool at a time and provide only and all the required arguments defined by the tool schema.
         11) After a tool call, read the tool's output and produce a detailed and human-readable final answer.
         12) Do not mention tools, function calls, or internal reasoning in the final answer.
+        13) Give reasioning in markdown format.
         """)
 )
 
@@ -57,7 +58,7 @@ def timestamp():
 
 def chat(user_query, chat_history):
     if not user_query.strip():
-        return chat_history, "{}", ""
+        return chat_history, "{}", "", ""
 
     query_timestamp = timestamp()
     # Convert chat history to LangChain messages
@@ -66,16 +67,18 @@ def chat(user_query, chat_history):
         if msg["role"] == "user":
             messages.append(HumanMessage(msg["content"]))
         elif msg["role"] == "assistant":
-            messages.append(AIMessage(msg["content"]))
+            messages.append(AIMessage(msg["content"][:500]))
 
     messages.append(HumanMessage(user_query))
 
     tool_calls_collected = []
+    reasonings_collected = ""
     final_answer = ""
 
     ## Handle Rate Limit Error
     try:
         response = agent.invoke({"messages": messages})
+        print(response)
     except groq.APIStatusError as e:
         body = getattr(e, "body", None)
         error = body["error"]
@@ -89,6 +92,8 @@ def chat(user_query, chat_history):
     answer_timestamp = timestamp()
 
     for msg in response["messages"]:
+        if isinstance(msg, AIMessage) and msg.additional_kwargs.get('reasoning_content'):
+            reasonings_collected += ("\n\n" + msg.additional_kwargs.get('reasoning_content'))
         if isinstance(msg, AIMessage) and msg.tool_calls:
             tool_calls_collected.extend(msg.tool_calls)
         elif isinstance(msg, AIMessage) and not msg.tool_calls:
@@ -104,11 +109,11 @@ def chat(user_query, chat_history):
         "content": f"{final_answer} <small><small>[{answer_timestamp}]</small></small>"
     })
 
-    return chat_history, json.dumps(tool_calls_collected, indent=2), ""
+    return chat_history, json.dumps(tool_calls_collected, indent=2), reasonings_collected, ""
 
 
 def reset_chat():
-    return [], "{}", ""
+    return [], "{}", "", "", []
 
 # -----------------------
 # Gradio UI
@@ -131,10 +136,17 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
         lines=2
     )
 
-    tool_calls_box = gr.Code(
-        label="AI Tool Calls (Structured JSON)",
-        language="json"
-    )
+    with gr.Row():
+        tool_calls_box = gr.Code(
+            label="AI Tool Calls (Structured JSON)",
+            language="json"
+        )
+        reasoning_box = gr.Code(
+            label="Model Reasoning",
+            language="markdown"
+            # interactive=False,
+            # lines=3
+        )
 
     with gr.Row():
         send_btn = gr.Button("Send", variant="primary")
@@ -143,12 +155,12 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
     send_btn.click(
         fn=chat,
         inputs=[user_input, chat_state],
-        outputs=[chatbot, tool_calls_box, user_input]
+        outputs=[chatbot, tool_calls_box, reasoning_box, user_input]
     )
 
     reset_btn.click(
         fn=reset_chat,
-        outputs=[chatbot, tool_calls_box, user_input]
+        outputs=[chatbot, tool_calls_box, reasoning_box, user_input, chat_state]
     )
 
 # -----------------------

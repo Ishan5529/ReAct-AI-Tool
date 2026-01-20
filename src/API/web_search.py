@@ -9,7 +9,7 @@ def search_tavily(query, topic="general", time_range="day"):
         include_answer="advanced",
         topic=topic.lower(),
         search_depth="advanced",
-        max_results=6,
+        max_results=4,
         time_range=time_range.lower()
     )
     return response
