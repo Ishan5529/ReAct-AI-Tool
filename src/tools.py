@@ -22,18 +22,19 @@ def web_search(query: str, topic: str, time_range: str) -> str:
     """
     return search_tavily(query, topic, time_range)
 
-@tool("weather_search_tool", description="Search current weather conditions of a city. input -> city: str : output -> str")
-def get_weather(city: str) -> str:
+@tool("weather_search_tool", description="Search current weather conditions of a city. input -> city: str, country: str (ISO 3166-1 alpha-2 country codes) : output -> str")
+def get_weather(city: str, country: str) -> str:
     """
     Search for current meteorological data using Open Weather Map.
 
     Args:
         city: Search City
+        country: ISO 3166-1 alpha-2 country codes
 
     Returns:
         Search results as string
     """
-    return curr_weather(city)
+    return curr_weather(city, country)
 
 @tool("real_time_tool", description="Get the current datetime. input -> None : Output -> str")
 def get_datetime() -> str:
