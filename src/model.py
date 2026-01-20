@@ -6,8 +6,8 @@ from langchain_groq import ChatGroq
 # -----------------------
 def get_model():
     llm = ChatGroq(
-        # model="qwen/qwen3-32b",
-        model="llama-3.1-8b-instant",
+        model="qwen/qwen3-32b",
+        # model="llama-3.1-8b-instant",
         temperature=0,
         max_tokens=1000,
         timeout=30,

@@ -1,6 +1,7 @@
 from langchain.tools import tool
 from src.API.web_search import search_tavily
 from src.API.weather import curr_weather
+from datetime import datetime
 
 # -----------------------
 # Tools
@@ -21,7 +22,7 @@ def web_search(query: str, topic: str, time_range: str) -> str:
     """
     return search_tavily(query, topic, time_range)
 
-@tool("weather_search_tool", description="Search weather conditions of a city. input -> city: str : output -> str")
+@tool("weather_search_tool", description="Search current weather conditions of a city. input -> city: str : output -> str")
 def get_weather(city: str) -> str:
     """
     Search for current meteorological data using Open Weather Map.
@@ -34,6 +35,17 @@ def get_weather(city: str) -> str:
     """
     return curr_weather(city)
 
+@tool("real_time_tool", description="Get the current datetime. input -> None : Output -> str")
+def get_datetime() -> str:
+    """
+    Get the current system datetime.
+    
+    :return: current_datetime
+    :output_schema: YYYY-MM-DD HH:MM:SS.ssssss
+    :rtype: str
+    """
+    return datetime.now()
+
 def get_tools():
-    tools = [web_search, get_weather]
+    tools = [web_search, get_weather, get_datetime]
     return tools
