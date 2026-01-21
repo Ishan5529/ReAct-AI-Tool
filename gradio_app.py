@@ -12,6 +12,7 @@ from langchain.messages import (
     AIMessage,
     SystemMessage
 )
+from rag_summarize import summarize
 from src.model import get_model
 from src.tools import get_tools
 
@@ -134,20 +135,20 @@ def timestamp():
 # Chat handler (NO STREAMING)
 # -----------------------
 
-def chat(user_query, chat_history):
+def chat(user_query, chat_history, chat_context):
     if not user_query.strip():
-        return chat_history, "{}", "", ""
+        return chat_history, "{}", "", "", chat_context
 
     query_timestamp = timestamp()
     # Convert chat history to LangChain messages
     messages = []
-    for msg in chat_history[-10:]:
-        if msg["role"] == "user":
-            messages.append(HumanMessage(msg["content"]))
-        elif msg["role"] == "assistant":
-            messages.append(AIMessage(msg["content"][:500]))
+    # for msg in chat_history[-10:]:
+    #     if msg["role"] == "user":
+    #         messages.append(HumanMessage(msg["content"]))
+    #     elif msg["role"] == "assistant":
+    #         messages.append(AIMessage(msg["content"][:500]))
 
-    messages.append(HumanMessage(user_query))
+    messages.append(HumanMessage(f"PREVIOUS CONTEXT: {chat_context}\n\nCURRENT_QUERY: {user_query}"))
 
     tool_calls_collected = []
     reasonings_collected = ""
@@ -161,7 +162,7 @@ def chat(user_query, chat_history):
         error = body["error"]
         if error and error.get("code") == "rate_limit_exceeded":
             response = {
-                "messages": [AIMessage(content = "Rate limit exceeded. Please reduce the message size or try again later.")]
+                "messages": [AIMessage(content = "")]
             }
         else:
             raise e
@@ -178,6 +179,8 @@ def chat(user_query, chat_history):
 
     if final_answer == "":
         final_answer = "Rate limit exceeded. Please reduce the message size or try again later."
+    else:
+        chat_context = summarize(chat_context, user_query, final_answer)
 
     # Update UI chat history
     chat_history.append({
@@ -189,11 +192,14 @@ def chat(user_query, chat_history):
         "content": f"{final_answer} <small><small>[{answer_timestamp}]</small></small>"
     })
 
-    return chat_history, json.dumps(tool_calls_collected, indent=2), reasonings_collected, ""
+    print(chat_context)
+    print("\n-------------------------------\n")
+
+    return chat_history, json.dumps(tool_calls_collected, indent=2), reasonings_collected, "", chat_context
 
 
 def reset_chat():
-    return [], "{}", "", "", []
+    return [], "{}", "", "", [], ""
 
 # -----------------------
 # Gradio UI
@@ -203,6 +209,7 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
     gr.Markdown("## ReAct AI Chatbot\nMulti-Turn • Tool-Aware")
 
     chat_state = gr.State([])
+    chat_context = gr.State("")
 
     chatbot = gr.Chatbot(
         label="Conversation",
@@ -231,13 +238,13 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
 
     send_btn.click(
         fn=chat,
-        inputs=[user_input, chat_state],
-        outputs=[chatbot, tool_calls_box, reasoning_box, user_input]
+        inputs=[user_input, chat_state, chat_context],
+        outputs=[chatbot, tool_calls_box, reasoning_box, user_input, chat_context]
     )
 
     reset_btn.click(
         fn=reset_chat,
-        outputs=[chatbot, tool_calls_box, reasoning_box, user_input, chat_state]
+        outputs=[chatbot, tool_calls_box, reasoning_box, user_input, chat_state, chat_context]
     )
 
 # -----------------------
