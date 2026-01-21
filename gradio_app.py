@@ -160,6 +160,7 @@ def chat(user_query, chat_history, chat_context):
     except groq.APIStatusError as e:
         body = getattr(e, "body", None)
         error = body["error"]
+        print(error)
         if error and error.get("code") == "rate_limit_exceeded":
             response = {
                 "messages": [AIMessage(content = "")]
@@ -191,9 +192,6 @@ def chat(user_query, chat_history, chat_context):
         "role": "assistant",
         "content": f"{final_answer} <small><small>[{answer_timestamp}]</small></small>"
     })
-
-    print(chat_context)
-    print("\n-------------------------------\n")
 
     return chat_history, json.dumps(tool_calls_collected, indent=2), reasonings_collected, "", chat_context
 

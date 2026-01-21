@@ -29,6 +29,7 @@ Your task is to merge all relevant information into a single updated summarized 
 RULES:
 - Preserve all important facts, decisions, constraints, and clarifications.
 - DO NOT LOSE CONTEXT.
+- (IMPORTANT) NEVER LOSE DATA RELATED TO USER. ALSO, PII IS IMPORTANT.
 - If removal is necessary due to size limits then, remove older, obsolete, or no-longer-relevant context first.
 - Resolve redundancies by merging overlapping information rather than deleting it.
 - (IMPORTANT) Do NOT introduce new assumptions or interpretations.
