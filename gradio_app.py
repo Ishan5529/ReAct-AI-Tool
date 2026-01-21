@@ -127,7 +127,6 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
     chatbot = gr.Chatbot(
         label="Conversation",
         height=420,
-        # type="messages"
     )
 
     user_input = gr.Textbox(
@@ -144,8 +143,6 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
         reasoning_box = gr.Code(
             label="Model Reasoning",
             language="markdown"
-            # interactive=False,
-            # lines=3
         )
 
     with gr.Row():
