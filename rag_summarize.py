@@ -11,7 +11,7 @@ from src.tools import get_tools
 # Agent setup
 # -----------------------
 
-llm = get_model()
+llm = get_model(5000)
 tools = [get_tools()[2]]
 
 agent = create_agent(
@@ -28,7 +28,7 @@ Your task is to merge all relevant information into a single updated summarized 
 
 RULES:
 - Preserve all important facts, decisions, constraints, and clarifications.
-- DO NOT LOSE CONTEXT.
+- (IMPORTANT) DO NOT LOSE CONTEXT.
 - (IMPORTANT) NEVER LOSE DATA RELATED TO USER. ALSO, PII IS IMPORTANT.
 - If removal is necessary due to size limits then, remove older, obsolete, or no-longer-relevant context first.
 - Resolve redundancies by merging overlapping information rather than deleting it.
@@ -41,8 +41,9 @@ RULES:
 OUTPUT REQUIREMENTS:
 - (IMPORTANT) Return ONLY the final summarized context as a plain string.
 - Do NOT include labels, formatting, or commentary.
-- The summarized context MUST NOT exceed 2000 characters.
 - (IMPORTANT) Ensure the summary remains coherent, self-contained, and usable as future context.
+- (IMPORTANT) The produced output can be large, upto 2000 characters.
+- The summarized context MUST NOT exceed 2000 characters.
 """)
 )
 
