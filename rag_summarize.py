@@ -11,12 +11,11 @@ from src.tools import get_tools
 # Agent setup
 # -----------------------
 
-llm = get_model(5000)
+llm = get_model(2000)
 tools = [get_tools()[2]]
 
 agent = create_agent(
     llm,
-    tools,
     system_prompt=SystemMessage("""You are a reasoning AI agent.
 
 You will be given:
@@ -30,13 +29,11 @@ RULES:
 - Preserve all important facts, decisions, constraints, and clarifications.
 - (IMPORTANT) DO NOT LOSE CONTEXT.
 - (IMPORTANT) NEVER LOSE DATA RELATED TO USER. ALSO, PII IS IMPORTANT.
-- If removal is necessary due to size limits then, remove older, obsolete, or no-longer-relevant context first.
-- Resolve redundancies by merging overlapping information rather than deleting it.
 - (IMPORTANT) Do NOT introduce new assumptions or interpretations.
 - (IMPORTANT) Do NOT add analysis, explanations, or metadata.
+- If removal is necessary due to size limits then, remove older, obsolete, or no-longer-relevant context first.
+- Resolve redundancies by merging overlapping information rather than deleting it.
 - Produce a clear and detailed AI Agent readable response.
-- Do NOT mention tools, tool calls, function names, or internal system behavior.
-- Do NOT expose internal chain-of-thought.
 
 OUTPUT REQUIREMENTS:
 - (IMPORTANT) Return ONLY the final summarized context as a plain string.
@@ -54,10 +51,13 @@ OUTPUT REQUIREMENTS:
 
 def summarize(context, user_query, ai_response):
     messages = []
-    messages.append(HumanMessage(f"PREVIOUS CONTEXT: {context}\n\nUSER: {user_query}\n\nAGENT: {ai_response}"))
+    messages.append(HumanMessage(f"PREVIOUS CONTEXT: {context}\n\nCURRENT USER QUERY: {user_query}\n\nOTHER AGENT RESPONSE: {ai_response}"))
     response = agent.invoke({"messages": messages})
+
     for msg in response["messages"]:
-        if isinstance(msg, AIMessage) and not msg.tool_calls:
+        if isinstance(msg, AIMessage):
             final_answer = msg.content
 
+    res = final_answer.split("</think>")
+    final_answer = res[1] if len(res) == 2 else res[0]
     return final_answer

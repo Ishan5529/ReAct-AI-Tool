@@ -103,6 +103,8 @@ def setup_agent():
 
     12) FINAL RESPONSE
     - Produce a clear, detailed, and human-readable answer.
+    - User is a non-technical person, use simple terms.
+    - Don't add model reasoning in the final response.
     - Do NOT mention tools, tool calls, function names, or internal system behavior.
     - Do NOT expose internal chain-of-thought.
     - If justification is needed, provide a concise, structured explanation in markdown without revealing internal reasoning steps.

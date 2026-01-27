@@ -1,5 +1,5 @@
 # ReAct-AI-Tool
-A powerful **Reasoning and Acting (ReAct) Agent** built with Python and **LangChain**. This tool utilizes **Groq** (Llama 3 / Qwen) for high-speed inference and connects to external APIs to fetch real-time data (Weather, Web Search) when general knowledge is insufficient.
+A powerful **Reasoning and Acting (ReAct) Agent** built with Python and **LangChain**. This tool utilizes **Groq** (openai/gpt-oss-120b / Llama 3 / Qwen) for high-speed inference and connects to external APIs to fetch real-time data (Weather, Web Search) when general knowledge is insufficient.
 
 It features both a **Command Line Interface (CLI)** and a **Gradio Web Interface**.  
 
@@ -13,7 +13,7 @@ It features both a **Command Line Interface (CLI)** and a **Gradio Web Interface
 *   **Ambiguity Handling:** The agent is programmed to pause and ask for clarification if user inputs are vague (e.g., missing city names or specific parameters).
 *   **Interfaces:**
     *   Terminal-based chat.
-    *   Modern web UI using Gradio (Chat history, tool output visualization).  
+    *   Modern web UI using Gradio (Chat history, tool output visualization, model reasoning).  
 
 ## Prerequisites
 
@@ -86,7 +86,7 @@ python app.py
 Type `exit` to quit the application.  
 
 ### Option B: Gradio Web Interface
-Provides a user-friendly UI with chat history and visibility into the tool calls (JSON format).
+Provides a user-friendly UI with chat history and visibility into the tool calls (JSON format) and model reasoning.
 
 ```Bash
 python gradio_app.py
@@ -105,10 +105,12 @@ ReAct-AI-Tool/
 │   ├── API/
 │   │   ├── weather.py       # Wrapper for OpenWeatherMap
 │   │   └── web_search.py    # Wrapper for Tavily Search
+│   ├── agent.py             # Agent Setup
 │   ├── model.py             # LLM Configuration (Groq)
 │   └── tools.py             # LangChain Tool definitions (@tool)
 ├── app.py                   # Main entry point for CLI
 ├── gradio_app.py            # Main entry point for Web UI
+├── rag_summarize.py         # Agent to summarize previous context
 ├── requirements.txt         # Project dependencies
 └── .env                     # API Keys (Not committed to repo)
 ```
@@ -119,3 +121,4 @@ ReAct-AI-Tool/
 2.  **Reasoning:** The Groq LLM analyzes the prompt. It detects that it doesn't know the live weather.
 3.  **Tool Execution:** The agent calls the `weather_search_tool` for Tokyo and then for London.
 4.  **Synthesis:** The agent combines the data from the tools into a natural language response.
+5.  **Context Update:** Another agent takes the previous context and the current user query and agent output to generate a summarized context for the next agent invokation.

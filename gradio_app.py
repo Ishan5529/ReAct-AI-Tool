@@ -88,26 +88,35 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
     chat_state = gr.State([])
     chat_context = gr.State("")
 
-    chatbot = gr.Chatbot(
-        label="Conversation",
-        height=420,
-    )
+
+    with gr.Row(height="calc(100vh - 350px)"):
+        chatbot = gr.Chatbot(
+            label="Conversation",
+            # height=420,
+            scale=3,
+            height="calc(100vh - 350px)",
+        )
+
+        with gr.Column(scale=1):
+            tool_calls_box = gr.Code(
+                label="AI Tool Calls (Structured JSON)",
+                language="json",
+                max_lines=11,
+                lines=11,
+            )
+
+            reasoning_box = gr.Code(
+                label="Model Reasoning",
+                language="markdown",
+                max_lines=7,
+                lines=7
+            )
 
     user_input = gr.Textbox(
         label="Your Message",
         placeholder="Ask something...",
         lines=2
     )
-
-    with gr.Row():
-        tool_calls_box = gr.Code(
-            label="AI Tool Calls (Structured JSON)",
-            language="json"
-        )
-        reasoning_box = gr.Code(
-            label="Model Reasoning",
-            language="markdown"
-        )
 
     with gr.Row():
         send_btn = gr.Button("Send", variant="primary")
