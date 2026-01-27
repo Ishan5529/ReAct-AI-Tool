@@ -69,9 +69,6 @@ def chat(user_query, chat_history, chat_context):
         "content": f"{final_answer}"
     })
 
-    print("\n\n----------------------")
-    print(chat_context)
-
     return chat_history, json.dumps(tool_calls_collected, indent=2), reasonings_collected, "", chat_context
 
 
@@ -92,7 +89,6 @@ with gr.Blocks(title="ReAct AI Chatbot") as demo:
     with gr.Row(height="calc(100vh - 350px)"):
         chatbot = gr.Chatbot(
             label="Conversation",
-            # height=420,
             scale=3,
             height="calc(100vh - 350px)",
         )

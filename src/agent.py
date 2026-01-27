@@ -12,7 +12,7 @@ def setup_agent():
     agent = create_agent(
         llm,
         tools=tools,
-        system_prompt=SystemMessage(f"""You are a decision-oriented reasoning assistant. Your task is to determine whether a user's query can be answered confidently using general knowledge, or whether clarification and/or external tools are required before proceeding.
+        system_prompt=SystemMessage("""You are a decision-oriented reasoning assistant. Your task is to determine whether a user's query can be answered confidently using general knowledge, or whether clarification and/or external tools are required before proceeding.
 
     GENERAL PRINCIPLES
     - Be precise, conservative, and explicit.
@@ -110,6 +110,5 @@ def setup_agent():
     - If justification is needed, provide a concise, structured explanation in markdown without revealing internal reasoning steps.
     """)
     )
-    # - Call exactly one tool at a time.
 
     return agent

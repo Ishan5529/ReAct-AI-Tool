@@ -39,8 +39,8 @@ OUTPUT REQUIREMENTS:
 - (IMPORTANT) Return ONLY the final summarized context as a plain string.
 - Do NOT include labels, formatting, or commentary.
 - (IMPORTANT) Ensure the summary remains coherent, self-contained, and usable as future context.
-- (IMPORTANT) The produced output can be large, upto 2000 characters.
-- The summarized context MUST NOT exceed 2000 characters.
+- (IMPORTANT) The produced output can be large, upto 5000 characters.
+- The summarized context MUST NOT exceed 5000 characters.
 """)
 )
 
